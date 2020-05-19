@@ -15,11 +15,15 @@ if(isset($_POST["submit"])){
     }
 
     else{
+
         $errors["user"]="(At least one Lower and Capital letter Without number)";
     }
 
     if(strlen($_POST["password"])<6 || strlen($_POST["password"])>18){
         $errors["passEr"]="Characters (Min 6 - 18 Max)";
+
+        $errors["user"]="(At least one Lower and Capital letter without number)";
+
     }
 
     if(preg_match("/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/",$_POST["password"])) {

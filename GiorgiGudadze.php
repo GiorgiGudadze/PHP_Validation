@@ -15,7 +15,11 @@ if(isset($_POST["submit"])){
         $errors["username"]="Empty or Not Enough Characters (min 3)";
     }
     else if(!preg_match("/^[a-zA-Z]*[A-Z]+[a-zA-Z]*$/",$_POST["username"])){
+
         $errors["username"]="(At least one Lower and Capital letter Without number)";
+
+        $errors["username"]="(At least one Lower and Capital letter without number)";
+
     }
 
     if(empty($_POST["name"])){
