@@ -1,4 +1,10 @@
 <?php
+
+include("connect/db_connect.php");
+
+
+
+
     $errors = array("username"=>"","firstname"=>"","lastname"=>"","email"=>"","password"=>"","Rpassword"=>""); 
 if(isset($_POST["submit"])){
     $email = $_POST["email"];
@@ -9,7 +15,11 @@ if(isset($_POST["submit"])){
         $errors["username"]="Empty or Not Enough Characters (min 3)";
     }
     else if(!preg_match("/^[a-zA-Z]*[A-Z]+[a-zA-Z]*$/",$_POST["username"])){
+
+        $errors["username"]="(At least one Lower and Capital letter Without number)";
+
         $errors["username"]="(At least one Lower and Capital letter without number)";
+
     }
 
     if(empty($_POST["name"])){
@@ -21,6 +31,9 @@ if(isset($_POST["submit"])){
     if(!filter_var($email,FILTER_VALIDATE_EMAIL)){
         $errors["email"]="Invalid email";
     }
+    if(strlen($_POST["password"])<6 || strlen($_POST["password"])>18){
+        $errors["password"]="Characters (Min 6 - 18 Max)";
+    }
     if(!preg_match("/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/",$password) || empty($_POST["password"])){
         $errors["password"]="(At least one numeric and Capital letter) Or Don't Leave Empty";
     }
@@ -31,11 +44,30 @@ if(isset($_POST["submit"])){
     }
 
     if(!array_filter($errors)){
-        header("Location:private.php");
-        session_start();
-        $_SESSION["userSes"]=$_POST["username"];
-        $_SESSION["passwordSes"]=$_POST["password"];
-    }
+
+        $username= $conn->real_escape_string($_POST["username"]);
+        $password = $conn->real_escape_string($_POST["password"]);
+
+        $sql = "INSERT INTO user_data (username_data,password_data) VALUES('$username','$password')";
+
+        mysqli_query($conn,$sql);
+
+            header("Location:private.php");
+            session_start();
+            $_SESSION["userSes"]=$_POST["username"];
+            $_SESSION["passwordSes"]=$_POST["password"];
+        }
+
+        else{
+
+        }
+        // $result = mysqli_query($conn,$sql);
+
+        // header("Location:private.php");
+        // session_start();
+        // $_SESSION["userSes"]=$_POST["username"];
+        // $_SESSION["passwordSes"]=$_POST["password"];
+    
 
 }
 
