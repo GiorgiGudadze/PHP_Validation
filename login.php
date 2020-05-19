@@ -1,5 +1,7 @@
 <?php
 
+$conn = mysqli_connect("localhost","gagoshidze","gagoshidze123","giorgi_gudadze");
+
 $errors = array('user'=>'','passEr'=>'');
 
 if(isset($_POST["submit"])){
@@ -13,7 +15,11 @@ if(isset($_POST["submit"])){
     }
 
     else{
-        $errors["user"]="(At least one Lower and Capital letter)";
+        $errors["user"]="(At least one Lower and Capital letter Without number)";
+    }
+
+    if(strlen($_POST["password"])<6 || strlen($_POST["password"])>18){
+        $errors["passEr"]="Characters (Min 6 - 18 Max)";
     }
 
     if(preg_match("/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/",$_POST["password"])) {
@@ -22,9 +28,6 @@ if(isset($_POST["submit"])){
 
     else if(empty($_POST["password"])){
         $errors["passEr"]="Type Password";
-    }
-    else if(strlen($_POST["password"])<6 || strlen($_POST["password"])>18){
-        $errors["passEr"]="Characters (Min 6 - 18 Max)";
     }
 
     else{
@@ -35,12 +38,39 @@ if(isset($_POST["submit"])){
         
     }
     else{
+
+        $usernameData = $conn->real_escape_string($_POST["username"]);
+        $userPassword = $conn->real_escape_string($_POST["password"]);
+    $sql = "SELECT * FROM user_data WHERE username_data='$usernameData' and password_data='$userPassword'";
+    $result = mysqli_query($conn,$sql);
+    $count = mysqli_num_rows($result);
+
+    if($count > 0 ){
+
         header("Location:private.php");
         session_start();
-        $_SESSION["userSes"]=$_POST["username"];
-        $_SESSION["passwordSes"]=$_POST["password"];
+        $_SESSION["userSes"]=$usernameData;
+        $_SESSION["passwordSes"]=$userPassword;
+    }
+
+    else{
+        $errors["passEr"]="User Doesn't Exist";
+    }
+
     }
 }
+    // $userEmail = $_POST["username"];
+    // $sql = "SELECT * FROM user_data WHERE email_data='$userEmail'";
+    // $result = mysqli_query($conn,$sql);
+    // $count = mysqli_num_rows($result);
+
+    // if($count > 0){
+    //     echo "user Dont exist";
+    //     header("Location:private.php");
+    //     session_start();
+    //     $_SESSION["userSes"]=$_POST["username"];
+    //     $_SESSION["passwordSes"]=$_POST["password"];
+    // }
 
 ?>
 
@@ -81,7 +111,7 @@ if(isset($_POST["submit"])){
         border: 1px solid rgba(35, 221, 37, 0.93);
     }
     section{
-        padding-top:120px;
+        padding-top:25px;
         max-width:250px;
         margin:auto;
     }
@@ -141,6 +171,11 @@ if(isset($_POST["submit"])){
         color: #ff6c62;
         text-decoration-color: #ff1100;
     }
+    section p{
+        color:red;
+        font-size:12px;
+        margin-bottom:20px;
+    }
     
     </style>
 </head>
@@ -148,8 +183,9 @@ if(isset($_POST["submit"])){
 <body>
 
 <section>
+<p>ყურადღება! შესვლას ვერ შეძლებთ თუ არ ხართ დარეგისტრირებული, რეგისტრაციის შემდეგ თქვენი მონაცემები ჩაიჭერება მონაცემთა ბაზაში რის საშუალებითაც შემდომში შეძლებთ აქედან შესვლას, თუ ასეთი აქაუნთი არსებობს</p>
 
-<h1>Sing In</h1>
+<h1>Sign In</h1>
 
 <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST">
 
@@ -187,6 +223,7 @@ if(isset($_POST["submit"])){
 </form>
 <a class="registration" href="GiorgiGudadze.php">Registration</a>
 </section>
+
 
 </body>
 </html>

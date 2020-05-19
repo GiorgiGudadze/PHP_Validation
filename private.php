@@ -3,6 +3,7 @@
 if(isset($_POST["logout"])){
 
     header("Location:login.php");
+    session_unset();
     session_destroy();
 }
 
@@ -93,8 +94,15 @@ $password=$_SESSION["passwordSes"];
         color:#cccccc;
     }
     .image-preview_image{
-        display:none;
+        display:block;
         width:100%;
+    }
+    .image-preview_default-text{
+        position:absolute;
+        z-index:-1;
+    }
+    .Upp{
+        margin:10px;
     }
     </style>
 
@@ -109,41 +117,24 @@ $password=$_SESSION["passwordSes"];
 
     <h1>Your Profile Details</h1>
     <h4 style="padding-bottom:10px;">Upload Profile Picture</h4>
-    <input type="file" name="inpFile" id="inpFile">
-    <div class="image-preview" id="imagePreview">
-    <img src="" alt="" class="image-preview_image">
-    <span class="image-preview_default-text">Image Preview</span>      
-    </div>
-    <script>
-        const inpFile = document.getElementById("inpFile");
-        const previewContainer = document.getElementById("imagePreview");
-        const previewImage = previewContainer.querySelector(".image-preview_image");
-        const previewDefaultText = previewContainer.querySelector(".image-preview_default-text");
 
-        inpFile.addEventListener("change",function(){
-            
-            const file = this.files[0];
+    <form action="uploadHelper.php" method="post" enctype="multipart/form-data">
+          <input type = "file" name = "upload">
+          <input type = "submit" value ="Upload" name="submitImg" class="Upp">   
+        </form>
 
-            if (file){
-                const reader = new FileReader();
+        <?php
 
-                previewDefaultText.style.display = "none";
-                previewImage.style.display = "block";
+         if (!empty($_SESSION['Actualimg'])):
+         
+         ?>
 
-                reader.addEventListener("load",function(){
-                    previewImage.setAttribute("src",this.result);
-                });
+        <div class="image-preview" id="imagePreview">
+          <img class="image-preview_image" src = "<?php print $_SESSION['Actualimg']; ?>">
+           <?php endif; ?>
+           <span class="image-preview_default-text">Image Preview</span> 
+        </div>
 
-                reader.readAsDataURL(file);
-            } else{
-                previewDefaultText.style.display = null;
-                previewImage.style.display = null;
-                previewImage.setAttribute("src","");
-            }
-
-        });
-
-    </script>
 
 
     <p>Username-><span><?php echo "$name"; ?></span></p>
@@ -155,6 +146,11 @@ $password=$_SESSION["passwordSes"];
     </form>
     
 </section>
+
+
+
+
+
 
 </body>
 </html>
